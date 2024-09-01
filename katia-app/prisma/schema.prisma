@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id    String @id @default(cuid())
+  name  String
+  phone String
+  pinnedComment String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  schedules Schedule[]
+  comments  Comment[]
+  reminders Reminder[]
+
+  @@index([name])
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  comment    String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reminder {
+  id        String   @id @default(cuid())
+  comment   String
+  date      DateTime
+  desmissed Boolean  @default(false)
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Employee {
+  id        String     @id @default(cuid())
+  name      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Schedule  Schedule[]
+
+  @@index([name])
+}
+
+model Schedule {
+  id         String   @id @default(cuid())
+  time       DateTime
+  comment    String
+  price      Float
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

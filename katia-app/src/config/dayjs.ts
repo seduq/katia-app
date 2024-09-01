@@ -1,0 +1,12 @@
+import dayjs from "dayjs";
+import "dayjs/locale/pt-br";
+import localeData from "dayjs/plugin/localeData";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+var customParseFormat = require("dayjs/plugin/customParseFormat");
+dayjs.extend(customParseFormat);
+dayjs.extend(localeData);
+dayjs.extend(localizedFormat);
+dayjs.locale("pt-br");
+export const dateFormat = dayjs().localeData().longDateFormat("L");
+export const dateLongFormat = dayjs().localeData().longDateFormat("LL");
+export const dateUrlFormat = "DD-MM-YYYY";

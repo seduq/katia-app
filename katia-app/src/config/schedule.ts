@@ -13,7 +13,7 @@ type ScheduleTime = {
   dateTime(date: Date): Dayjs;
 };
 
-export const day: ScheduleTime[] = [
+export const scheduleDay: ScheduleTime[] = [
   ...Array((endHour - startHour) * schedulesPerHour),
 ].map((_, index) => {
   const hour = startHour + Math.floor(index / schedulesPerHour);

@@ -10,11 +10,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator trpc {
+  provider          = "prisma-trpc-generator"
+  // Fix imports with "@/lib/trpc/context" and "@/lib/trpc/options"
+  contextPath       = "../src/context"
+  trpcOptionsPath   = "../src/trpcOptions"
+  withZod           = true
+  withMiddleware    = false
+  withShield        = false
+  generateModelActions = "create,delete,findFirst,findMany,findUnique,update,upsert"
+}
+
 model Customer {
   id    String @id @default(cuid())
   name  String
   phone String
-  pinnedComment String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

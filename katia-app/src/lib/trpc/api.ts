@@ -16,7 +16,7 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 
 import SuperJSON from "superjson";
-import { combinedRouter } from "@/lib/server/routers";
+import { katiaRouter } from "@/lib/server/routers";
 
 const createContext = cache(() => {
   return createTRPCContext({
@@ -27,7 +27,7 @@ const createContext = cache(() => {
   });
 });
 
-export const api = createTRPCProxyClient<typeof combinedRouter>({
+export const api = createTRPCProxyClient<typeof katiaRouter>({
   transformer: SuperJSON,
   links: [
     loggerLink({
@@ -41,7 +41,7 @@ export const api = createTRPCProxyClient<typeof combinedRouter>({
           createContext()
             .then((ctx) => {
               return callProcedure({
-                procedures: combinedRouter._def.procedures,
+                procedures: katiaRouter._def.procedures,
                 path: op.path,
                 rawInput: op.input,
                 ctx,

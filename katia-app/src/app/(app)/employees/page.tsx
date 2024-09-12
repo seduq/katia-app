@@ -8,12 +8,14 @@ import * as React from "react";
  * Row -> Employee Page (History)
  */
 
-export interface IEmployeesPageProps {}
+export interface IEmployeesPageProps { }
 
-export default function EmployeesPage(props: IEmployeesPageProps) {
+export default async function EmployeesPage(props: IEmployeesPageProps) {
+  const a = await trpc.employee.findAll.useQuery();
   return (
     <section>
-      <EmployeeList></EmployeeList>
+      {a.data?.map((aa) => <div>{aa.name}</div>)}
+      {/* <EmployeeList></EmployeeList> */}
     </section>
   );
 }

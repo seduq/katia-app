@@ -5,7 +5,7 @@ import { User } from "lucide-react";
 import { Employee } from "@prisma/client";
 
 export interface ISidebarEmployeesProps {
-  employees: Employee[];
+  employees: Employee[] | undefined;
 }
 
 export function SidebarEmployees({ employees }: ISidebarEmployeesProps) {
@@ -14,7 +14,7 @@ export function SidebarEmployees({ employees }: ISidebarEmployeesProps) {
       title="Funcionários"
       employee
       border
-      links={employees.map<SidebarLink>((e) => ({
+      links={employees?.map<SidebarLink>((e) => ({
         href: `/employees/${e.id}`,
         icon: User,
         title: `${e.name}`,

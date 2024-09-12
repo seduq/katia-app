@@ -1,6 +1,6 @@
 import {
   publicProcedure,
-  t,
-} from "@/prisma/generated/routers/helpers/createRouter";
+  router,
+} from "@/lib/trpc/trpc";
 
-export const commentsRouter = t.router({});
+export const commentsRouter = router({});

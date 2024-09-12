@@ -1,8 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Resolver } from "@hookform/resolvers/zod"
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
@@ -16,18 +15,17 @@ import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { translateFormButton } from "@/config/form";
-import { Employee, Prisma } from "@prisma/client";
+import pt_br from "@/translations";
+import { Employee } from "@prisma/client";
 import { z } from "zod";
-import { EmployeeUpsertSchema, EmployeeUpsertWithoutScheduleInputObjectSchema } from "@/prisma/generated/schemas";
-import { EmployeeSchema } from "@/lib/db/schemas/employees";
+import { SchemaEmployee } from "@/lib/db/schemas/employees";
 
 
 const EmployeeForm = ({
   employee,
   closeModal,
 }: {
-  employee?: z.infer<typeof EmployeeSchema>;
+  employee?: z.infer<typeof SchemaEmployee>;
   closeModal?: () => void;
 }) => {
   const editing = !!employee?.id;
@@ -35,8 +33,9 @@ const EmployeeForm = ({
   const router = useRouter();
   const utils = trpc.useUtils();
 
-  const form = useForm<Prisma.EmployeeCreateInput>({
-  });
+  const form = useForm<typeof SchemaEmployee._input>({
+    resolver: zodResolver(SchemaEmployee)
+  })
 
   utils.employee.invalidate();
 
@@ -58,9 +57,6 @@ const EmployeeForm = ({
       case "update":
         toast.success(`Funcionário atualizado!`);
         break;
-      case "delete":
-        toast.success(`Funcionário apagado!`);
-        break;
     }
   };
 
@@ -74,22 +70,23 @@ const EmployeeForm = ({
     }
   };
 
-  const { mutate: upsertEmployee, isLoading: isCreating } =
-    trpc.employee.upsertOneEmployee.useMutation({
+  const { mutate: createEmployee, isLoading: isCreating } =
+    trpc.employee.createOneEmployee.useMutation({
       onSuccess: (_) => onSuccess("create"),
       onError: (err) => onError("create", { error: err.message }),
     });
 
-  const { mutate: deleteEmployee, isLoading: isDeleting } =
-    trpc.employee.deleteOneEmployee.useMutation({
-      onSuccess: (_) => onSuccess("delete"),
-      onError: (err) => onError("delete", { error: err.message }),
-    });
+  // const { mutate: deleteEmployee, isLoading: isDeleting } =
+  //   trpc.employee.deleteOneEmployee.useMutation({
+  //     onSuccess: (_) => onSuccess("delete"),
+  //     onError: (err) => onError("delete", { error: err.message }),
+  //   });
 
-  const handleSubmit = (values: Prisma.EmployeeCreateInput) => {
-    console.log(values);
-    upsertEmployee({ where: { id: values.id }, update: values, create: values });
-  };
+  // const handleSubmit = (values: Prisma.EmployeeCreateInput) => {
+  //   console.log(values);
+  //   upsertEmployee({ where: { id: values.id }, update: values, create: values });
+  // };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className={"space-y-8"}>
@@ -112,17 +109,8 @@ const EmployeeForm = ({
           className="mr-1"
           disabled={isCreating}
         >
-          {translateFormButton(editing, isCreating, isCreating && editing)}
+          {pt_br.Form.Button(editing, isCreating, isCreating && editing)}
         </Button>
-        {editing ? (
-          <Button
-            type="button"
-            variant={"destructive"}
-            onClick={() => deleteEmployee({ where: { id: employee.id } })}
-          >
-            {translateFormButton(editing, false, false, true, isDeleting)}
-          </Button>
-        ) : null}
       </form>
     </Form>
   );

@@ -1,6 +1,10 @@
 import {
-  publicProcedure,
-  t,
-} from "@/prisma/generated/routers/helpers/createRouter";
+  router,
+} from "@/lib/trpc/trpc";
+import { mutations } from "./mutations";
+import { queries } from "./queries";
 
-export const employeesRouter = t.router({});
+export const employeesRouter = router({
+  ...mutations,
+  ...queries
+}) 

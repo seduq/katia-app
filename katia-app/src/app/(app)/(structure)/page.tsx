@@ -13,7 +13,7 @@ export async function Structure({
 }: Readonly<{
   children?: React.ReactNode;
 }>) {
-  const employees = await api.employee.findManyEmployee.query({});
+  const {data: employees} = await api.employee.findAll.useQuery();
   return (
     <div>
       <div className="flex h-screen">

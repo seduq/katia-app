@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 
 export interface ISidebarItemProps {
-  links: SidebarLink[];
+  links: SidebarLink[] | undefined;
   title?: string;
   border?: boolean;
   employee?: boolean;
@@ -32,7 +32,7 @@ export function SidebarItem({
         </h4>
       ) : null}
       <ul>
-        {links.map((link) => (
+        {links?.map((link) => (
           <li key={link.title}>
             <SidebarItemLink link={link} active={fullPathname === link.href} />
           </li>

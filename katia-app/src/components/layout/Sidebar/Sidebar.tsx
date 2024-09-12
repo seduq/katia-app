@@ -6,7 +6,7 @@ import { SidebarEmployees } from "./SidebarEmployees";
 import { Employee } from "@prisma/client";
 
 export interface ISidebarProps {
-  employees: Employee[];
+  employees: Employee[] | undefined;
 }
 
 export default function Sidebar({employees} : ISidebarProps) {

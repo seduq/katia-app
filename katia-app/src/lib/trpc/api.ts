@@ -1,60 +1,49 @@
 import "server-only";
 
-import { env } from "@/lib/env.mjs";
-import { createTRPCContext } from "./context";
-
 import {
-  createTRPCProxyClient,
+  httpBatchLink,
   loggerLink,
-  TRPCClientError,
 } from "@trpc/client";
-import { callProcedure } from "@trpc/server";
-import { type TRPCErrorResponse } from "@trpc/server/rpc";
-import { observable } from "@trpc/server/observable";
 
-import { cache } from "react";
-import { cookies } from "next/headers";
+import { createTRPCNext } from "@trpc/next"
 
-import SuperJSON from "superjson";
-import { katiaRouter } from "@/lib/server/routers";
+import SuperJSON from "superjson"; "superjson";
+import { appRouter } from "@/lib/server/routers";
+import { getUrl } from "./utils";
 
-const createContext = cache(() => {
-  return createTRPCContext({
-    headers: new Headers({
-      cookie: cookies().toString(),
-      "x-trpc-source": "rsc",
-    }),
-  });
-});
-
-export const api = createTRPCProxyClient<typeof katiaRouter>({
+export const api = createTRPCNext<typeof appRouter>({
   transformer: SuperJSON,
-  links: [
-    loggerLink({
-      enabled: (op) =>
-        env.NODE_ENV === "development" ||
-        (op.direction === "down" && op.result instanceof Error),
-    }),
-    () =>
-      ({ op }) =>
-        observable((observer) => {
-          createContext()
-            .then((ctx) => {
-              return callProcedure({
-                procedures: katiaRouter._def.procedures,
-                path: op.path,
-                rawInput: op.input,
-                ctx,
-                type: op.type,
-              });
-            })
-            .then((data) => {
-              observer.next({ result: { data } });
-              observer.complete();
-            })
-            .catch((cause: TRPCErrorResponse) => {
-              observer.error(TRPCClientError.from(cause));
-            });
+  config() {/**
+    * If you want to use SSR, you need to use the server's full URL
+    * @link https://trpc.io/docs/v11/ssr
+    */
+    return {
+      /**
+       * @link https://trpc.io/docs/v11/client/links
+       */
+      links: [
+        // adds pretty logs to your console in development and logs errors in production
+        loggerLink({
+          enabled: (opts) =>
+            process.env.NODE_ENV === 'development' ||
+            (opts.direction === 'down' && opts.result instanceof Error),
         }),
-  ],
+        httpBatchLink({
+          url: `${getUrl()}`,
+          /**
+           * @link https://trpc.io/docs/v11/data-transformers
+           */
+          transformer: SuperJSON,
+        }),
+      ],
+      /**
+       * @link https://tanstack.com/query/v5/docs/reference/QueryClient
+       */
+      // queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
+    };
+  },
+  /**
+   * @link https://trpc.io/docs/v11/ssr
+   */
+  ssr: false,
 });

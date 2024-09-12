@@ -20,7 +20,7 @@ export default function Navbar() {
       </nav>
       {open ? (
         <div className="my-4 p-4 bg-muted">
-          <ul className="space-y-2">
+          <ul>
             {defaultLinks.map((link) => (
               <li key={link.title} onClick={() => setOpen(false)} className="">
                 <Link
@@ -35,14 +35,12 @@ export default function Navbar() {
                 </Link>
               </li>
             ))}
-          </ul>
-          <ul className="space-y-2">
             {additionalLinks
               .flatMap((addLinks) =>
                 addLinks.links.map((l) => ({
                   href: l.href,
                   icon: l.icon,
-                  title: `${addLinks.title}/${l.title}`,
+                  title: `${l.title}`,
                 }))
               )
               .map((link) => (

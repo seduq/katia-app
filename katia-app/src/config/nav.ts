@@ -30,7 +30,7 @@ export const additionalLinks: AdditionalLinks[] = [
         icon: User,
       },
       {
-        href: "/clients",
+        href: "/customers",
         title: "Clientes",
         icon: Contact,
       },

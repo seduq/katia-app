@@ -1,13 +1,12 @@
-import * as React from 'react';
+/**
+ * Filter -> Name
+ * List -> Form
+ * Row -> Id (History)
+ */
+import * as React from "react";
 
-export interface ICustomerPageProps {
-}
+export interface ICustomersPageProps {}
 
-export function CustomerPage (props: ICustomerPageProps) {
-  
-  return (
-    <div>
-      
-    </div>
-  );
+export default function CustomersPage(props: ICustomersPageProps) {
+  return <main></main>;
 }

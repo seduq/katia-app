@@ -14,7 +14,7 @@ generator trpc {
   provider          = "prisma-trpc-generator"
   // Fix imports with "@/lib/trpc/context" and "@/lib/trpc/options"
   contextPath       = "../src/context"
-  trpcOptionsPath   = "../src/trpcOptions"
+  trpcOptionsPath   = ""
   withZod           = true
   withMiddleware    = false
   withShield        = false
@@ -50,7 +50,7 @@ model Reminder {
   id        String   @id @default(cuid())
   comment   String
   date      DateTime
-  desmissed Boolean  @default(false)
+  dismissed Boolean  @default(false)
 
   customer   Customer @relation(fields: [customerId], references: [id])
   customerId String

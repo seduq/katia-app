@@ -1,22 +1,34 @@
-export class PT_BR_FORM {
-  constructor () {
+export type FormAction = "update" | "update" | "delete"
+export type EntityName = "cliente" | "funcionário" | "agendamento" | "lembrete"
 
+
+export class PT_BR_FORM {
+  constructor() { }
+
+  Toaster(name: EntityName, action: FormAction, error: boolean, errorMessage?: string) {
+    const errorString = 'Erro em';
+    const successString = 'Sucesso em'
+    switch (action) {
+      case "update":
+        return error && `${errorString} salvar ${name}` || `${successString} salvar ${name} \n ${errorMessage}`;
+      case "update":
+        return error && `${errorString} atualizar ${name}` || `${successString} atualizar ${name} \n ${errorMessage}`;
+      case "delete":
+        return error && `${errorString} remover ${name}` || `${successString} remover ${name} \n ${errorMessage}`;
+    }
   }
 
   Button(
-    editing: boolean,
-    isCreating: boolean,
-    isUpdating: boolean,
-    isDelete?: boolean,
-    isDeleting?: boolean
+    action: FormAction,
+    isPending: boolean
   ): string {
-    if (isDelete) {
-      return isDeleting ? "Apagando" : "Apagar"
-    }
-    else if (editing) {
-      return isUpdating ? "Atualizando" : "Atualizar";
-    } else {
-      return isCreating ? "Salvando" : "Salvar";
+    switch (action) {
+      case "update":
+        return isPending && `Salvando` || `Salvar`;
+      case "update":
+        return isPending && `Atualizando` || `Atualizar`;
+      case "delete":
+        return isPending && `Removendo` || `Remover`;
     }
   }
 }

@@ -47,7 +47,6 @@ export function TrpcProvider(props: { children: React.ReactNode, cookies?: strin
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         {props.children}
-        <ReactQueryDevtools />
       </QueryClientProvider>
     </trpc.Provider>
   );

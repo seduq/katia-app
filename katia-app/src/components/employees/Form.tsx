@@ -1,7 +1,4 @@
 "use client";
-
-import { useForm } from "react-hook-form";
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
@@ -16,17 +13,17 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import pt_br from "@/translations";
-import { Employee, Prisma } from "@prisma/client";
 import { z } from "zod";
 import { InferEmployee, SchemaEmployee } from "@/lib/db/schemas/employees";
 import { useZodForm } from "@/lib/utils";
+import { FormAction } from "@/translations/form";
 
 
 const EmployeeForm = ({
   employee,
   closeModal,
 }: {
-  employee?: z.infer<typeof SchemaEmployee>;
+  employee?: InferEmployee;
   closeModal?: () => void;
 }) => {
   const editing = !!employee?.id;
@@ -35,46 +32,53 @@ const EmployeeForm = ({
   const utils = trpc.useUtils();
 
   const form = useZodForm<InferEmployee>({
+    defaultValues: employee,
     schema: SchemaEmployee
   });
 
-  utils.employee.invalidate();
+  //utils.employee.invalidate();
 
   const onSuccess = async (
-    action: "create" | "update" | "delete",
+    action: FormAction,
     data?: { error?: string }
   ) => {
     if (data?.error) {
-      toast.error(data.error);
+      onError(action, data);
       return;
     }
 
     router.refresh();
     if (closeModal) closeModal();
     switch (action) {
-      case "create":
-        toast.success(`Funcionário criado!`);
-        break;
       case "update":
-        toast.success(`Funcionário atualizado!`);
+        pt_br.Form.Toaster("funcionário", action, false);
+        break;
+      case "delete":
+        pt_br.Form.Toaster("funcionário", action, false);
         break;
     }
   };
 
   const onError = async (
-    action: "create" | "update" | "delete",
+    action: FormAction,
     data?: { error?: string }
   ) => {
-    if (data?.error) {
-      toast.error(`${action} ${data.error}`);
-      return;
+    router.refresh();
+    if (closeModal) closeModal();
+    switch (action) {
+      case "update":
+        pt_br.Form.Toaster("funcionário", action, false, data?.error);
+        break;
+      case "delete":
+        pt_br.Form.Toaster("funcionário", action, false, data?.error);
+        break;
     }
   };
 
-  const { mutate: createEmployee, isPending: isCreating } =
-    trpc.employee.createOneEmployee.useMutation({
-      onSuccess: (_) => onSuccess("create"),
-      onError: (err) => onError("create", { error: err.message }),
+  const { mutate: updateEmployee, isPending: isCreating } =
+    trpc.employee.updateOneEmployee.useMutation({
+      onSuccess: (_) => onSuccess("update"),
+      onError: (err) => onError("update", { error: err.message }),
     });
 
   const { mutate: deleteEmployee, isPending: isDeleting } =
@@ -84,7 +88,10 @@ const EmployeeForm = ({
     });
 
   const handleSubmit = (values: InferEmployee) => {
-    console.log(values);
+    if (editing)
+      deleteEmployee(values);
+    else
+      updateEmployee(values);
   };
 
   return (
@@ -103,13 +110,19 @@ const EmployeeForm = ({
               <FormMessage />
             </FormItem>
           )}
-        />
+        />{
+          editing &&
+          <Button
+            type="submit"
+            className="mr-1"
+          >
+            {pt_br.Form.Button("update", isCreating || isDeleting)}
+          </Button>}
         <Button
           type="submit"
           className="mr-1"
-          disabled={isCreating}
         >
-          {pt_br.Form.Button(editing, isCreating, isCreating && editing)}
+          {pt_br.Form.Button(editing ? "delete" : "update", isCreating || isDeleting)}
         </Button>
       </form>
     </Form>

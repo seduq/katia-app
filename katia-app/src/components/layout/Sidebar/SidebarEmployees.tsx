@@ -1,4 +1,4 @@
-import { SidebarItem } from "./SidebarItem";
+import { SidebarContent } from "./SidebarContent";
 import { SidebarLink } from "@/config/nav";
 import { User } from "lucide-react";
 import { Employee } from "@prisma/client";
@@ -9,15 +9,14 @@ export interface ISidebarEmployeesProps {
 
 export function SidebarEmployees({ employees }: ISidebarEmployeesProps) {
   return (
-    <SidebarItem
+    <SidebarContent
       title="Funcionários"
-      employee
       border
       links={employees?.map<SidebarLink>((e) => ({
         href: `/employees/${e.id}`,
         icon: User,
         title: `${e.name}`,
       }))}
-    ></SidebarItem>
+    ></SidebarContent>
   );
 }

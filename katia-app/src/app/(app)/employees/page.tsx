@@ -1,4 +1,5 @@
-import EmployeeList from "@/components/employees/List";
+import EmployeeList, { EmployeeEmptyState } from "@/components/employees/List";
+import { api } from "@/lib/trpc/api";
 import * as React from "react";
 
 /**
@@ -9,9 +10,12 @@ import * as React from "react";
 export interface IEmployeesPageProps { }
 
 export default async function EmployeesPage(props: IEmployeesPageProps) {
+  const employees = await api.employee.findAll.query();
+
   return (
-    <section>
-      <EmployeeList></EmployeeList>
-    </section>
+    <div>
+      {employees.length == 0 && <EmployeeEmptyState></EmployeeEmptyState>}
+      <EmployeeList employees={employees}></EmployeeList>
+    </div>
   );
 }

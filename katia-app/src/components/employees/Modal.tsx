@@ -46,12 +46,12 @@ export default function EmployeeModal({
             Novo Funcionário
           </Button>
         ) : (
-          <Button
-            variant={editing ? "default" : "outline"}
-            size={editing ? "sm" : "icon"}
-          >
-            {editing ? "Atualizar" : "+"}
-          </Button>
+            <Button
+              variant={editing ? "default" : "outline"}
+              size={editing ? "sm" : "icon"}
+            >
+              {editing ? "Atualizar" : "+"}
+            </Button>
         )}
       </DialogTrigger>
       <DialogContent>

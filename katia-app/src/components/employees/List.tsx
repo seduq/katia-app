@@ -3,35 +3,49 @@ import { trpc } from "@/lib/trpc/client";
 import EmployeeModal from "./Modal";
 import { InferEmployee } from '@/lib/db/schemas/employees';
 import { z } from "zod";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
-export default function EmployeeList() {
-  const { data: employees } = trpc.employee.findAll.useQuery();
+export interface IEmployeeList {
+  employees: InferEmployee[];
+}
 
-  if (employees?.length === 0) {
-    return <EmptyState />;
-  }
+export default function EmployeeList(props: IEmployeeList) {
+  const { data: employees } = trpc.employee.findAll.useQuery(undefined, {
+    initialData: props.employees,
+    refetchOnMount: false
+  });
 
   return (
-    <ul>
-      {employees?.map((employee) => (
-        <EmployeeRow employee={employee} key={employee.id} />
-      ))}
-    </ul>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Nome</TableHead>
+          <TableHead></TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {employees?.map((employee) => (
+          <EmployeeRow employee={employee} key={employee.id} />
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 
 const EmployeeRow = ({ employee }: { employee: InferEmployee }) => {
   return (
-    <li className="flex justify-between my-2">
-      <div className="w-full">
-        <div>{employee.name}</div>
-      </div>
-      <EmployeeModal employee={employee} />
-    </li>
+    <TableRow>
+      <TableCell>
+        {employee.name}
+      </TableCell>
+      <TableCell>
+        <EmployeeModal employee={employee} />
+      </TableCell>
+    </TableRow>
   );
 };
 
-const EmptyState = () => {
+export const EmployeeEmptyState = () => {
   return (
     <div className="text-center">
       <h3 className="mt-2 text-sm font-semibold text-secondary-foreground">

@@ -9,20 +9,14 @@ export interface ISidebarItemProps {
   links: SidebarLink[] | undefined;
   title?: string;
   border?: boolean;
-  employee?: boolean;
 }
 
-export function SidebarItem({
+export function SidebarContent({
   links,
   border,
   title,
-  employee,
 }: ISidebarItemProps) {
   const fullPathname = usePathname();
-  const pathname =
-    "/" +
-    fullPathname.split("/")[1] +
-    (employee ? fullPathname.split("/")[2] || "" : "");
 
   return (
     <section className={border ? "border-border border-t my-8 pt-4" : ""}>

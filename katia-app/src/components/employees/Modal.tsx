@@ -10,14 +10,14 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import EmployeeForm from "./Form";
-import { EmployeeSchema } from "@/lib/db/schemas/employees";
+import { InferEmployee, SchemaEmployee } from "@/lib/db/schemas/employees";
 import { z } from "zod";
 
 export default function EmployeeModal({
   employee,
   emptyState,
 }: {
-  employee?: z.infer<typeof EmployeeSchema>;
+  employee?: InferEmployee;
   emptyState?: boolean;
 }) {
   const [open, setOpen] = useState(false);

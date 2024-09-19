@@ -1,6 +1,4 @@
 import EmployeeList from "@/components/employees/List";
-import { Button } from "@/components/ui/button";
-import { trpc } from "@/lib/trpc/client";
 import * as React from "react";
 
 /**
@@ -11,11 +9,9 @@ import * as React from "react";
 export interface IEmployeesPageProps { }
 
 export default async function EmployeesPage(props: IEmployeesPageProps) {
-  const a = await trpc.employee.findAll.useQuery();
   return (
     <section>
-      {a.data?.map((aa) => <div>{aa.name}</div>)}
-      {/* <EmployeeList></EmployeeList> */}
+      <EmployeeList></EmployeeList>
     </section>
   );
 }

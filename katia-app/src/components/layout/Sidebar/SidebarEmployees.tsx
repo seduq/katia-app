@@ -1,4 +1,3 @@
-import { trpc } from "@/lib/trpc/client";
 import { SidebarItem } from "./SidebarItem";
 import { SidebarLink } from "@/config/nav";
 import { User } from "lucide-react";

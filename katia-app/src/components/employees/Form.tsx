@@ -16,9 +16,10 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import pt_br from "@/translations";
-import { Employee } from "@prisma/client";
+import { Employee, Prisma } from "@prisma/client";
 import { z } from "zod";
-import { SchemaEmployee } from "@/lib/db/schemas/employees";
+import { InferEmployee, SchemaEmployee } from "@/lib/db/schemas/employees";
+import { useZodForm } from "@/lib/utils";
 
 
 const EmployeeForm = ({
@@ -33,9 +34,9 @@ const EmployeeForm = ({
   const router = useRouter();
   const utils = trpc.useUtils();
 
-  const form = useForm<typeof SchemaEmployee._input>({
-    resolver: zodResolver(SchemaEmployee)
-  })
+  const form = useZodForm<InferEmployee>({
+    schema: SchemaEmployee
+  });
 
   utils.employee.invalidate();
 
@@ -70,22 +71,21 @@ const EmployeeForm = ({
     }
   };
 
-  const { mutate: createEmployee, isLoading: isCreating } =
+  const { mutate: createEmployee, isPending: isCreating } =
     trpc.employee.createOneEmployee.useMutation({
       onSuccess: (_) => onSuccess("create"),
       onError: (err) => onError("create", { error: err.message }),
     });
 
-  // const { mutate: deleteEmployee, isLoading: isDeleting } =
-  //   trpc.employee.deleteOneEmployee.useMutation({
-  //     onSuccess: (_) => onSuccess("delete"),
-  //     onError: (err) => onError("delete", { error: err.message }),
-  //   });
+  const { mutate: deleteEmployee, isPending: isDeleting } =
+    trpc.employee.deleteOneEmployee.useMutation({
+      onSuccess: (_) => onSuccess("delete"),
+      onError: (err) => onError("delete", { error: err.message }),
+    });
 
-  // const handleSubmit = (values: Prisma.EmployeeCreateInput) => {
-  //   console.log(values);
-  //   upsertEmployee({ where: { id: values.id }, update: values, create: values });
-  // };
+  const handleSubmit = (values: InferEmployee) => {
+    console.log(values);
+  };
 
   return (
     <Form {...form}>

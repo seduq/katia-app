@@ -1,21 +1,12 @@
-import { prisma } from "@/lib/db/index"
-import { cookies } from "next/headers";
-import { cache } from "react";
+import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
+import { prisma } from '../db';
 
-export async function createTRPCContext(opts: { headers: Headers }) {
+async function createContext(opts?: FetchCreateContextFnOptions) {
   return {
     prisma,
-    ...opts,
+    headers: opts && Object.fromEntries(opts.req?.headers),
   }
 }
 
-export const createContext = cache(() => {
-  return createTRPCContext({
-    headers: new Headers({
-      cookie: cookies().toString(),
-      "x-trpc-source": "rsc",
-    }),
-  });
-});
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

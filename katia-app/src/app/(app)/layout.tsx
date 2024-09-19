@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
-import TrpcProvider from "@/lib/trpc/provider";
 import { cookies } from "next/headers";
-import { Structure } from "./(structure)/page";
+import { Structure } from "./(structure)";
+import { TrpcProvider } from "@/lib/trpc/client";
 
 export default function AppLayout({
   children,
@@ -9,11 +9,9 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
-      <TrpcProvider cookies={cookies().toString()}>
-        <Structure>{children}</Structure>
-      </TrpcProvider>
+    <TrpcProvider>
+      <Structure>{children}</Structure>
       <Toaster richColors />
-    </>
+    </TrpcProvider>
   );
 }

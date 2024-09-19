@@ -1,49 +1,38 @@
-import "server-only";
-
-import {
-  httpBatchLink,
-  loggerLink,
-} from "@trpc/client";
-
+import { loggerLink, } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next"
-
 import SuperJSON from "superjson"; "superjson";
-import { appRouter } from "@/lib/server/routers";
-import { getUrl } from "./utils";
+import { appRouter, AppRouter } from "@/lib/server/routers";
+import { experimental_nextCacheLink as nextCacheLink } from '@trpc/next/app-dir/links/nextCache';
+import { experimental_createTRPCNextAppDirServer as createTrpcNextApp } from '@trpc/next/app-dir/server';
+import { transformer } from "./utils";
+import { prisma } from "../db";
+import { cookies } from "next/headers";
 
-export const api = createTRPCNext<typeof appRouter>({
-  transformer: SuperJSON,
-  config() {/**
-    * If you want to use SSR, you need to use the server's full URL
-    * @link https://trpc.io/docs/v11/ssr
-    */
+
+export const api = createTrpcNextApp<AppRouter>({
+  config() {
     return {
-      /**
-       * @link https://trpc.io/docs/v11/client/links
-       */
       links: [
-        // adds pretty logs to your console in development and logs errors in production
         loggerLink({
           enabled: (opts) =>
             process.env.NODE_ENV === 'development' ||
             (opts.direction === 'down' && opts.result instanceof Error),
         }),
-        httpBatchLink({
-          url: `${getUrl()}`,
-          /**
-           * @link https://trpc.io/docs/v11/data-transformers
-           */
-          transformer: SuperJSON,
+        nextCacheLink({
+          revalidate: 5,
+          router: appRouter,
+          transformer,
+          createContext: async () => {
+            return {
+              prisma,
+              headers: {
+                cookie: cookies().toString(),
+                'x-trpc-source': 'rsc-invoke',
+              },
+            };
+          },
         }),
       ],
-      /**
-       * @link https://tanstack.com/query/v5/docs/reference/QueryClient
-       */
-      // queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
     };
   },
-  /**
-   * @link https://trpc.io/docs/v11/ssr
-   */
-  ssr: false,
 });

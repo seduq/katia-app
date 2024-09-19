@@ -4,18 +4,17 @@
  */
 
 import { Toaster } from "@/components/ui/sonner";
-import TrpcProvider from "@/lib/trpc/provider";
+import { Structure } from "./(app)/(structure)";
+import {TrpcProvider} from "@/lib/trpc/client";
 import { cookies } from "next/headers";
-import { Structure } from "./(app)/(structure)/page";
 
 export default function Home() {
   return (
     <main>
       <TrpcProvider cookies={cookies().toString()}>
         <Structure></Structure>
+        <Toaster richColors />
       </TrpcProvider>
-
-      <Toaster richColors />
     </main>
   );
 }

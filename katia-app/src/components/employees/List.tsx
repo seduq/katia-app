@@ -1,17 +1,11 @@
 "use client"
 import { trpc } from "@/lib/trpc/client";
-import { Employee, EmployeePayload, Prisma, PrismaClient } from "@prisma/client";
 import EmployeeModal from "./Modal";
-import { EmployeeSchema } from '@/lib/db/schemas/employees';
+import { InferEmployee } from '@/lib/db/schemas/employees';
 import { z } from "zod";
 
 export default function EmployeeList() {
-  const { data: employees } = trpc.employee.findManyEmployee.useQuery(
-    {},
-    {
-      refetchOnMount: false,
-    }
-  );
+  const { data: employees } = trpc.employee.findAll.useQuery();
 
   if (employees?.length === 0) {
     return <EmptyState />;
@@ -26,7 +20,7 @@ export default function EmployeeList() {
   );
 }
 
-const EmployeeRow = ({ employee }: { employee: z.infer<typeof EmployeeSchema> }) => {
+const EmployeeRow = ({ employee }: { employee: InferEmployee }) => {
   return (
     <li className="flex justify-between my-2">
       <div className="w-full">

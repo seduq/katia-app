@@ -13,15 +13,15 @@ export async function Structure({
 }: Readonly<{
   children?: React.ReactNode;
 }>) {
-  const {data: employees} = await api.employee.findAll.useQuery();
+  const employees = await api.employee.findAll.query();
   return (
     <div>
       <div className="flex h-screen">
         <Sidebar employees={employees}></Sidebar>
-        <main className="flex-1 md:p-8 pt-2 p-8 overflow-y-auto">
+        <div className="flex-1 md:p-8 pt-2 p-8 overflow-y-auto">
           <Navbar></Navbar>
           {children}
-        </main>
+        </div>
       </div>
     </div>
   );
